@@ -19,12 +19,38 @@ app.use(collectorRoute);
 //     console.error("Error during database connection. \n", err);
 //   });
 
-mongoose
-  .connect("mongodb://10.5.16.131:40003/test?directConnection=true")
-  .then(() => console.log("Server is running"))
-  .catch((err) => {
-    console.error("Error during database connection. \n", err);
-  });
+const tryConnection = async (port: number) => {
+  const uri = `mongodb://10.5.16.131:${port}/test?directConnection=true`;
+
+  try {
+    // Tenta conectar
+    await mongoose.connect(uri);
+
+    // Verifica se a base de dados 'test' existe
+    const db = mongoose.connection.db;
+    const collections = await db.listCollections().toArray();
+
+    if (collections.some((collection) => collection.name === "test")) {
+      console.log(`Connected to MongoDB on port ${port} with 'test' database`);
+    } else {
+      console.log(`Connected to MongoDB on port ${port}`);
+    }
+  } catch (err) {
+    console.error(`Failed to connect to MongoDB on port ${port}.`);
+
+    // Se a conexão falhar, tenta a próxima porta
+    const nextPort = port + 1;
+    if (nextPort <= 40003) {
+      console.log(`Trying next port: ${nextPort}`);
+      await tryConnection(nextPort);
+    } else {
+      console.error("Unable to connect to MongoDB on any port");
+    }
+  }
+};
+
+// Iniciar a tentativa de conexão a partir da porta 40001
+tryConnection(40001);
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
