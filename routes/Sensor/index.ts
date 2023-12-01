@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get("/sensor/:id_collector", [], async (req: Request, res: Response) => {
   const { id_collector } = req.params;
-  console.log(id_collector);
 
   try {
     const sensors = await Sensor.find({ id_coletor: id_collector });
