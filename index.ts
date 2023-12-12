@@ -37,6 +37,7 @@ const tryConnection = async (port: number) => {
     }
   } catch (err) {
     console.error(`Failed to connect to MongoDB on port ${port}.`);
+    await mongoose.disconnect();
 
     // Se a conexão falhar, tenta a próxima porta
     const nextPort = port + 1;
