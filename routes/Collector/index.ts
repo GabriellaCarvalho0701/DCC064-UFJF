@@ -28,18 +28,38 @@ router.get("/collector", [], async (req: Request, res: Response) => {
   }
 });
 
-//FIND
+//FIND ALL COLLECTORS
+router.get("/all_collectors/:id", [], async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const collectors = await Collector.find({ id });
+
+  const collectorsWithSensors = await Promise.all(
+    collectors.map(async (collector) => {
+      const sensors = await Sensor.find({ id_coletor: collector.id });
+      return {
+        collector,
+        sensors,
+      };
+    })
+  );
+
+  return res.status(200).json(collectorsWithSensors);
+});
+
 router.get("/collector/:id", [], async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const collector = await Collector.findOne({ id });
+    const collector = await Collector.findOne({ id, closing_in: null });
 
     if (!collector) {
       return res.status(404).json({ message: "Collector not found" });
     }
 
-    const sensors = await Sensor.find({ id_coletor: collector.id });
+    const sensors = await Sensor.find({
+      id_coletor: collector.id,
+    });
 
     return res.status(200).json({ collector, sensors });
   } catch (error: any) {
@@ -52,7 +72,12 @@ router.get("/collector/:id", [], async (req: Request, res: Response) => {
 
 //CREATE
 router.post("/collector/", async (req: Request, res: Response) => {
-  const { id, localization, created_at, closing_in } = req.body;
+  const { id, localization, created_at } = req.body;
+  let { closing_in } = req.body;
+
+  if (!closing_in) {
+    closing_in = null;
+  }
 
   const collectorAlreadyExists = await Collector.findOne({ id });
   if (collectorAlreadyExists) {
@@ -73,7 +98,8 @@ router.post("/collector/", async (req: Request, res: Response) => {
 //UPDATE
 router.put("/collector/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { localization, created_at, closing_in } = req.body;
+  const { localization, created_at } = req.body;
+  let { closing_in } = req.body;
 
   const collector = await Collector.findOne({ id });
 
@@ -84,6 +110,10 @@ router.put("/collector/:id", async (req: Request, res: Response) => {
   // Se localization está sendo alterado, criar um novo collector e fecha o atual
   if (localization !== collector.localization) {
     collector.closing_in = new Date();
+
+    if (!closing_in) {
+      closing_in = null;
+    }
 
     const newCollector = Collector.build({
       id: parseInt(id, 10),
