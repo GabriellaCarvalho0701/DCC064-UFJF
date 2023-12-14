@@ -6,6 +6,7 @@ interface ISensor {
   value: Number;
   type: String;
   date: Date;
+  unitMeasurement: String;
 }
 
 export { ISensor };

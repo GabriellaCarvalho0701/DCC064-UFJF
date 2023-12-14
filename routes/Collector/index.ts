@@ -51,12 +51,16 @@ router.get("/collector/:id", [], async (req: Request, res: Response) => {
 });
 
 //CREATE
-router.post("/collector/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { localization, created_at, closing_in } = req.body;
+router.post("/collector/", async (req: Request, res: Response) => {
+  const { id, localization, created_at, closing_in } = req.body;
+
+  const collectorAlreadyExists = await Collector.findOne({ id });
+  if (collectorAlreadyExists) {
+    return res.status(404).json({ message: "Collector already exists" });
+  }
 
   const collector = Collector.build({
-    id: parseInt(id, 10),
+    id,
     localization,
     created_at,
     closing_in,
@@ -67,8 +71,9 @@ router.post("/collector/:id", async (req: Request, res: Response) => {
 });
 
 //UPDATE
-router.put("/collector/", async (req: Request, res: Response) => {
-  const { id, localization, created_at, closing_in } = req.body;
+router.put("/collector/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { localization, created_at, closing_in } = req.body;
 
   const collector = await Collector.findOne({ id });
 
@@ -81,7 +86,7 @@ router.put("/collector/", async (req: Request, res: Response) => {
     collector.closing_in = new Date();
 
     const newCollector = Collector.build({
-      id,
+      id: parseInt(id, 10),
       localization,
       created_at,
       closing_in,

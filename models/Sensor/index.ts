@@ -6,6 +6,8 @@ interface SensorDoc extends mongoose.Document {
   id: Number;
   value: Number;
   type: String;
+  date: Date;
+  unitMeasurement: String;
 }
 
 interface SensorModelInterface extends mongoose.Model<SensorDoc> {
@@ -31,6 +33,10 @@ const sensorSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
+    required: true,
+  },
+  unitMeasurement: {
+    type: String,
     required: true,
   },
 });
