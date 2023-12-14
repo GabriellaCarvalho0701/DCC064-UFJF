@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import { Sensor } from "../../models/Sensor";
+import { Collector } from "../../models/Collector";
+import { TypeSensor } from "../../models/TypeSensor";
 
 const router = express.Router();
 
@@ -47,10 +49,29 @@ router.get(
   }
 );
 
+//CREATE
 router.post("/sensor", async (req: Request, res: Response) => {
-  const { id_coletor, id, value, type } = req.body;
+  const { id_coletor, id, value, type, date } = req.body;
 
-  const sensor = Sensor.build({ id_coletor, id, value, type });
+  const collector = await Collector.findOne({ id: id_coletor });
+
+  if (!collector) {
+    return res.status(404).json({ message: "Collector not found" });
+  }
+
+  const typeSensor = await TypeSensor.findOne({ type });
+
+  if (!typeSensor) {
+    return res.status(404).json({ message: "Type sensor not exists" });
+  }
+
+  const sensorAlreadyExist = await Sensor.findOne({ id_coletor, id });
+
+  if (sensorAlreadyExist) {
+    return res.status(404).json({ message: "Sensor with ID already exists" });
+  }
+
+  const sensor = Sensor.build({ id_coletor, id, value, type, date });
   await sensor.save();
 
   return res.status(201).send(sensor);

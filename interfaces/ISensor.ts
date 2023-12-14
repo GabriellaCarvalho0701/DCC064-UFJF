@@ -5,6 +5,7 @@ interface ISensor {
   id: Number;
   value: Number;
   type: String;
+  date: Date;
 }
 
 export { ISensor };
