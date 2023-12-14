@@ -4,6 +4,7 @@ import { Sensor } from "../../models/Sensor";
 
 const router = express.Router();
 
+//LIST
 router.get("/collector", [], async (req: Request, res: Response) => {
   try {
     const collectors = await Collector.find({});
@@ -27,6 +28,7 @@ router.get("/collector", [], async (req: Request, res: Response) => {
   }
 });
 
+//FIND
 router.get("/collector/:id", [], async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -48,13 +50,55 @@ router.get("/collector/:id", [], async (req: Request, res: Response) => {
   }
 });
 
-router.post("/collector", async (req: Request, res: Response) => {
-  const { id } = req.body;
+//CREATE
+router.post("/collector/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { localization, created_at, closing_in } = req.body;
 
-  const collector = Collector.build({ id });
+  const collector = Collector.build({
+    id: parseInt(id, 10),
+    localization,
+    created_at,
+    closing_in,
+  });
   await collector.save();
 
   return res.status(201).send(collector);
+});
+
+//UPDATE
+router.put("/collector/", async (req: Request, res: Response) => {
+  const { id, localization, created_at, closing_in } = req.body;
+
+  const collector = await Collector.findOne({ id });
+
+  if (!collector) {
+    return res.status(404).json({ message: "Collector not found" });
+  }
+
+  // Se localization está sendo alterado, criar um novo collector e fecha o atual
+  if (localization !== collector.localization) {
+    collector.closing_in = new Date();
+
+    const newCollector = Collector.build({
+      id,
+      localization,
+      created_at,
+      closing_in,
+    });
+
+    await newCollector.save();
+    await collector.save();
+    return res.status(201).send(newCollector);
+  }
+
+  // Se closing_in está sendo alterado, atualizar a data final no collector existente
+  if (closing_in !== undefined) {
+    collector.closing_in = closing_in;
+  }
+
+  await collector.save();
+  return res.status(200).send(collector);
 });
 
 export { router as collectorRoute };
