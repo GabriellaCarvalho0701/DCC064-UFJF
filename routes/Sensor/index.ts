@@ -110,6 +110,7 @@ router.put("/sensor/:id_collector/:id", async (req: Request, res: Response) => {
   return res.status(200).send(sensor);
 });
 
+//DELETE
 router.delete(
   "/sensor/:id_collector/:id",
   async (req: Request, res: Response) => {

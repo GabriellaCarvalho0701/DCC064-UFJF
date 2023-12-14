@@ -106,4 +106,25 @@ router.put("/collector/:id", async (req: Request, res: Response) => {
   return res.status(200).send(collector);
 });
 
+//DELETE
+router.delete("/collector/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const sensorsCount = await Sensor.countDocuments({ id_coletor: id });
+
+  if (sensorsCount > 0) {
+    return res
+      .status(400)
+      .json({ message: "Cannot delete collector with associated sensors" });
+  }
+
+  const collector = await Collector.findOneAndDelete({ id });
+
+  if (!collector) {
+    return res.status(404).json({ message: "Collector not found" });
+  }
+
+  return res.status(200).json({ message: "Collector deleted successfully" });
+});
+
 export { router as collectorRoute };
