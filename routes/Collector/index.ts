@@ -11,6 +11,11 @@ router.get("/collector", [], async (req: Request, res: Response) => {
 
     const collectorsWithSensors = await Promise.all(
       collectors.map(async (collector) => {
+        if (collector.closing_in != null) {
+          return {
+            collector,
+          };
+        }
         const sensors = await Sensor.find({ id_coletor: collector.id });
         return {
           collector,
@@ -36,6 +41,11 @@ router.get("/all_collectors/:id", [], async (req: Request, res: Response) => {
 
   const collectorsWithSensors = await Promise.all(
     collectors.map(async (collector) => {
+      if (collector.closing_in != null) {
+        return {
+          collector,
+        };
+      }
       const sensors = await Sensor.find({ id_coletor: collector.id });
       return {
         collector,
@@ -47,6 +57,7 @@ router.get("/all_collectors/:id", [], async (req: Request, res: Response) => {
   return res.status(200).json(collectorsWithSensors);
 });
 
+//FIND
 router.get("/collector/:id", [], async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -55,6 +66,10 @@ router.get("/collector/:id", [], async (req: Request, res: Response) => {
 
     if (!collector) {
       return res.status(404).json({ message: "Collector not found" });
+    }
+
+    if (collector.closing_in != null) {
+      return res.status(200).json({ collector });
     }
 
     const sensors = await Sensor.find({

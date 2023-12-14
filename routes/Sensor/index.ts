@@ -55,7 +55,10 @@ router.get(
 router.post("/sensor", async (req: Request, res: Response) => {
   const { id_coletor, id, value, type, date, unitMeasurement } = req.body;
 
-  const collector = await Collector.findOne({ id: id_coletor });
+  const collector = await Collector.findOne({
+    id: id_coletor,
+    closing_in: null,
+  });
 
   if (!collector) {
     return res.status(404).json({ message: "Collector not found" });
