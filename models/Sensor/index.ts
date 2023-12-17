@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 import { ISensor } from "../../interfaces/ISensor";
+import { IRegister } from "../../interfaces/IRegister";
 
 interface SensorDoc extends mongoose.Document {
   id_coletor: Number;
   id: Number;
-  value: Number;
+  value: Array<IRegister>;
   type: String;
-  date: Date;
-  unitMeasurement: String;
 }
 
 interface SensorModelInterface extends mongoose.Model<SensorDoc> {
@@ -24,18 +23,9 @@ const sensorSchema = new mongoose.Schema({
     required: true,
   },
   value: {
-    type: Number,
-    required: true,
+    type: Array<IRegister>,
   },
   type: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: Date,
-    required: true,
-  },
-  unitMeasurement: {
     type: String,
     required: true,
   },

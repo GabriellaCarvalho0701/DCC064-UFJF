@@ -53,7 +53,7 @@ router.get(
 
 //CREATE
 router.post("/sensor", async (req: Request, res: Response) => {
-  const { id_coletor, id, value, type, date, unitMeasurement } = req.body;
+  const { id_coletor, id, value = [], type } = req.body;
 
   const collector = await Collector.findOne({
     id: id_coletor,
@@ -81,8 +81,6 @@ router.post("/sensor", async (req: Request, res: Response) => {
     id,
     value,
     type,
-    date,
-    unitMeasurement,
   });
   await sensor.save();
 
@@ -92,7 +90,7 @@ router.post("/sensor", async (req: Request, res: Response) => {
 //UPDATE
 router.put("/sensor/:id_collector/:id", async (req: Request, res: Response) => {
   const { id_collector, id } = req.params;
-  const { value, type, date } = req.body;
+  const { type } = req.body;
 
   const sensor = await Sensor.findOne({
     id_coletor: id_collector,
@@ -105,13 +103,43 @@ router.put("/sensor/:id_collector/:id", async (req: Request, res: Response) => {
       .json({ message: "ID Sensor not found in the collector" });
   }
 
-  sensor.value = value;
   sensor.type = type;
-  sensor.date = date;
 
   await sensor.save();
   return res.status(200).send(sensor);
 });
+
+// ADD REGISTER
+router.post(
+  "/sensor/:id_collector/:id/register",
+  async (req: Request, res: Response) => {
+    const { id_collector, id } = req.params;
+    const { value, date, unitMeasurement } = req.body;
+
+    const sensor = await Sensor.findOne({
+      id_coletor: id_collector,
+      id: id,
+    });
+
+    if (!sensor) {
+      return res
+        .status(404)
+        .json({ message: "ID Sensor not found in the collector" });
+    }
+
+    sensor.value = [
+      ...sensor.value,
+      {
+        value,
+        date,
+        unitMeasurement,
+      },
+    ];
+
+    await sensor.save();
+    return res.status(200).send(sensor);
+  }
+);
 
 //DELETE
 router.delete(
