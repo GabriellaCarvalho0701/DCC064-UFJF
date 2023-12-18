@@ -4,9 +4,9 @@
 </h1>
 
 <p align="center">
-  <img alt="Language" src="https://img.shields.io/badge/language-PHP-brightgreen">
-  <img alt="Language" src="https://img.shields.io/badge/language-JQuery-brightgreen">
-  <img alt="Language" src="https://img.shields.io/badge/language-Ajax-brightgreen">
+  <img alt="Language" src="https://img.shields.io/badge/Docker-blue?logo=docker&logoColor=white">
+  <img alt="Language" src="https://img.shields.io/badge/TypeScript-blue?logo=typescript&logoColor=white">
+  <img alt="Language" src="https://img.shields.io/badge/Node.js-green?logo=node.js&logoColor=white">
 
 </p>
 
