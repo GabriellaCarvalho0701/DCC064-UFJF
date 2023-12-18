@@ -47,13 +47,5 @@ sh
 
 
 2. Para executar:
-
-sh
-  # Instale as dependências
-  $ npm install
-
-
-3. Comando para iniciar o banco:
-    <br>
 	npm start
 
