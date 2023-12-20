@@ -14,12 +14,12 @@ app.use(sensorRoute);
 app.use(collectorRoute);
 app.use(typeSensorRoute);
 
-mongoose
-  .connect("mongodb://localhost:27017/test")
-  .then(() => console.log("Server is running"))
-  .catch((err) => {
-    console.error("Error during database connection. \n", err);
-  });
+// mongoose
+//   .connect("mongodb://localhost:27017/test")
+//   .then(() => console.log("Server is running"))
+//   .catch((err) => {
+//     console.error("Error during database connection. \n", err);
+//   });
 
 const tryConnection = async (port: number) => {
   const uri = `mongodb://10.5.16.131:${port}/test?directConnection=true`;
@@ -53,7 +53,7 @@ const tryConnection = async (port: number) => {
 };
 
 // Iniciar a tentativa de conexão a partir da porta 40001
-// tryConnection(40001);
+tryConnection(40001);
 
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
