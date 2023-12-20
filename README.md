@@ -44,6 +44,7 @@ O projeto foi desenvolvido utilizando as seguintes tecnologias:
 
 sh
   $ git clone https://github.com/GabriellaCarvalho0701/DCC064-UFJF.git 
+  $ npm install
 
 
 2. Para executar:

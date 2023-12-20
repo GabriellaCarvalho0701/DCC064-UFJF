@@ -15,7 +15,7 @@ app.use(collectorRoute);
 app.use(typeSensorRoute);
 
 mongoose
-  .connect("mongodb://localhost:27017/sensor")
+  .connect("mongodb://localhost:27017/test")
   .then(() => console.log("Server is running"))
   .catch((err) => {
     console.error("Error during database connection. \n", err);

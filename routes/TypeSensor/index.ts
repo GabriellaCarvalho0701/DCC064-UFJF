@@ -80,4 +80,33 @@ router.put("/typesensor/:id", async (req: Request, res: Response) => {
   return res.status(200).send(typeSensor);
 });
 
+//DELETE
+router.delete("/typesensor/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      error: "Invalid ObjectId -> ID TypeSensor not found in the collector",
+    });
+  }
+
+  try {
+    const _id = new mongoose.Types.ObjectId(id);
+
+    const typeSensor = await TypeSensor.findOneAndDelete({ _id });
+
+    if (!typeSensor) {
+      return res
+        .status(404)
+        .json({ message: "ID TypeSensor not found in the collector" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "ID TypeSensor deleted in the collector" });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export { router as typeSensorRoute };

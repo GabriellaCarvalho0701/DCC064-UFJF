@@ -116,7 +116,7 @@ router.put("/collector/:id", async (req: Request, res: Response) => {
   const { localization, created_at } = req.body;
   let { closing_in } = req.body;
 
-  const collector = await Collector.findOne({ id });
+  const collector = await Collector.findOne({ id, closing_in: null });
 
   if (!collector) {
     return res.status(404).json({ message: "Collector not found" });
